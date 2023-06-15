@@ -59,6 +59,9 @@ void ACollectProps_ProjectCharacter::SetupPlayerInputComponent(class UInputCompo
 	// Bind fire event
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &ACollectProps_ProjectCharacter::OnPrimaryAction);
 
+	// Bind Interact event
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACollectProps_ProjectCharacter::OnInteract);
+
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
@@ -73,6 +76,19 @@ void ACollectProps_ProjectCharacter::SetupPlayerInputComponent(class UInputCompo
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &ACollectProps_ProjectCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("Look Up / Down Gamepad", this, &ACollectProps_ProjectCharacter::LookUpAtRate);
+}
+
+void ACollectProps_ProjectCharacter::OnInteract()
+{
+	if (CurrentInteractionObject) {
+		CurrentInteractionObject->Interact(); 
+	}
+	else {
+		if (GEngine)
+		{ 
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Nothing to interact with"));
+		}
+	}
 }
 
 void ACollectProps_ProjectCharacter::OnPrimaryAction()

@@ -38,7 +38,7 @@ protected:
 
 public:
 	/** Current object with which we will interact if press interact button (e.g. 'E'). */
-	class UInteractInterface* CurrentInteractionObject;
+	class IInteractInterface* CurrentInteractionObject;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -48,6 +48,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnUseItem OnUseItem;
 protected:
+
+	/** Interact with an interactable object */
+	void OnInteract();
 	
 	/** Fires a projectile. */
 	void OnPrimaryAction();

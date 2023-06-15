@@ -15,4 +15,9 @@ ACollectProps_ProjectGameMode::ACollectProps_ProjectGameMode()
 	uint8 PropIndex = 0;
 	PropIndex = FMath::RandRange(0, 2);
 	PropsToCollect = static_cast<EPropType>(PropIndex);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 300.0f, FColor::Yellow, FString::Printf(TEXT("Prop index is \"%d\""), PropIndex));
+	}
 }
