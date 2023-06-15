@@ -23,7 +23,10 @@ class ACollectProps_ProjectGameMode : public AGameModeBase
 
 public:
 	UPROPERTY(BlueprintReadOnly)
-	EPropType PropsToCollect;
+	EPropType PropTypeToCollect;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 NumberOfPropsToCollect;
 
 public:
 	ACollectProps_ProjectGameMode();

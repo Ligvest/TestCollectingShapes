@@ -20,6 +20,11 @@ public:
 	ACollectPropsGameState();
 
 public:
+	void IncrementPropsCounter();
+
+
+public:
 	EPropType PropTypeToCollect;
 	int32 PropsCounter;
+	int32 NumberOfPropsToCollect;
 };
