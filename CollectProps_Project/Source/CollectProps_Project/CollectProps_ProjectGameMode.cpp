@@ -17,13 +17,7 @@ ACollectProps_ProjectGameMode::ACollectProps_ProjectGameMode()
 	PropIndex = FMath::RandRange(0, 2);
 	PropTypeToCollect = static_cast<EPropType>(PropIndex);
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 300.0f, FColor::Yellow, FString::Printf(TEXT("Props type is \"%d\""), PropIndex));
-	}
-
 	NumberOfPropsToCollect = FMath::RandRange(5, 15);
-
 
 	// 3 mins by defaut but could be changed in blueprints
 	TimeLeftBeforeGameOver = 180.f;

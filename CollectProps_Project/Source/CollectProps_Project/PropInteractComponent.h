@@ -10,6 +10,9 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPropPickup);
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class COLLECTPROPS_PROJECT_API UPropInteractComponent : public UInteractCollisionBase
 {
@@ -24,6 +27,9 @@ public:
 	void OnInteract();
 
 	virtual void Interact() override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Interaction")
+	FOnPropPickup OnPropPickup;
 
 public:
 	UPROPERTY(EditDefaultsOnly);

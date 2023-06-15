@@ -25,11 +25,6 @@ void ATeleportBase::BeginPlay()
 	EndPoint = StartPoint + EndPoint; // Converting relative coordinates of EndPoint to world coordinates
 }
 
-void ATeleportBase::SwapStartAndEndPoints(FVector& Start, FVector& End)
-{
-	Swap(Start, End);
-}
-
 // Called every frame
 void ATeleportBase::Tick(float DeltaTime)
 {
@@ -42,11 +37,6 @@ void ATeleportBase::PerformTeleport()
 	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
 	if(Character){
 		Character->SetActorLocation(EndPoint);
-	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 300.0f, FColor::Yellow, FString::Printf(TEXT("Teleported")));
 	}
 }
 

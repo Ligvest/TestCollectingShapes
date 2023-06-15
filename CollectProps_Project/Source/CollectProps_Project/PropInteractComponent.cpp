@@ -26,6 +26,7 @@ void UPropInteractComponent::Interact()
 	ACollectPropsGameState* GameState = Cast<ACollectPropsGameState>(GameStateBase);
 	if (GameState) {
 		GameState->IncrementPropsCounter();
+		OnPropPickup.Broadcast();
 	}
 	OnInteract();
 }
