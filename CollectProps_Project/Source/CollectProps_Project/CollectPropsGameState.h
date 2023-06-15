@@ -20,11 +20,27 @@ public:
 	ACollectPropsGameState();
 
 public:
+	// Called on each prop pickup
 	void IncrementPropsCounter();
 
+	// Called in case of success
+	void YouWon();
+
+	// Called in case of fail
+	void YouLose();
+
+	// Timer before the player loses
+	FTimerHandle TimerBeforeGameOver;
+
+
+	virtual void Tick( float DeltaSeconds ) override;
 
 public:
 	EPropType PropTypeToCollect;
 	int32 PropsCounter;
 	int32 NumberOfPropsToCollect;
+
+protected:
+	class ACollectPropsHUD* GetHud();
+
 };

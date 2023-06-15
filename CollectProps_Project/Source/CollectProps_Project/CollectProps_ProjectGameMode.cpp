@@ -29,4 +29,6 @@ ACollectProps_ProjectGameMode::ACollectProps_ProjectGameMode()
 		GEngine->AddOnScreenDebugMessage(-1, 300.0f, FColor::Yellow, FString::Printf(TEXT("Props num is \"%d\""), NumberOfPropsToCollect));
 	}
 
+	// 3 mins by defaut but could be changed in blueprints
+	TimeLeftBeforeGameOver = 180.f;
 }

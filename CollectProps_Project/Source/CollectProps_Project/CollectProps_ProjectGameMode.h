@@ -28,6 +28,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int32 NumberOfPropsToCollect;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float TimeLeftBeforeGameOver;
+
 public:
 	ACollectProps_ProjectGameMode();
 };

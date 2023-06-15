@@ -20,5 +20,11 @@ public:
 	void IncrementPropsCounter();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTimer(int32 NewTimerValue);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void WinMessage();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void LoseMessage();
 };
