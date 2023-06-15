@@ -9,9 +9,11 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class COLLECTPROPS_PROJECT_API UDoorInteractCollision : public UInteractCollisionBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void Interact() override;
 };
