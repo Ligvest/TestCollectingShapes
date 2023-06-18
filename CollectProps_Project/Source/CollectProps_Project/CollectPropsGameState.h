@@ -19,6 +19,8 @@ class COLLECTPROPS_PROJECT_API ACollectPropsGameState : public AGameStateBase
 public:
 	ACollectPropsGameState();
 
+	virtual void BeginPlay() override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 
 public:
@@ -41,6 +43,7 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 public:
+
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	EPropType PropTypeToCollect;
 

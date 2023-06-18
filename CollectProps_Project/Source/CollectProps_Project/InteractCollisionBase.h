@@ -27,12 +27,6 @@ public:
 
 public:
 
-	/** Delegate to whom anyone can subscribe to receive this event */
-	//UPROPERTY(BlueprintAssignable, Category = "Interaction")
-	//FOnInteractableActorOverlap OnOverlap;
-
-public:
-
 	UFUNCTION(BlueprintCallable)
 	void SetIsEnabled(bool bNewIsEnabled);
 

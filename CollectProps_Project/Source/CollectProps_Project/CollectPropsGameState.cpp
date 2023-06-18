@@ -14,6 +14,7 @@ ACollectPropsGameState::ACollectPropsGameState() {
 	PrimaryActorTick.bTickEvenWhenPaused = false;
 	PrimaryActorTick.TickGroup = TG_PostUpdateWork;
 
+	SecondsBeforeGameOver = 120;
 
 	// Only the server executes this line as clients can't access GameMode
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
@@ -27,12 +28,17 @@ ACollectPropsGameState::ACollectPropsGameState() {
 
 		// Create a timer with time left before game over
 		SecondsBeforeGameOver = GameMode->TimeLeftBeforeGameOver;
-		GetWorldTimerManager().SetTimer(TimerBeforeGameOver, this, &ACollectPropsGameState::YouLose, SecondsBeforeGameOver, false);
 	}
+
 
 
 	// Initial number of collected props
 	PropsCounter = 0;
+}
+
+void ACollectPropsGameState::BeginPlay()
+{
+	GetWorldTimerManager().SetTimer(TimerBeforeGameOver, this, &ACollectPropsGameState::YouLose, SecondsBeforeGameOver, false);
 }
 
 void ACollectPropsGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

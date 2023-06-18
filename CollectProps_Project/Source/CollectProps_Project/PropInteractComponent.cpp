@@ -24,7 +24,6 @@ void UPropInteractComponent::Interact(AActor* Interactor)
 	ACollectPropsGameState* GameState = Cast<ACollectPropsGameState>(GameStateBase);
 	if (GameState) {
 		GameState->IncrementPropsCounter();
-		//OnPropPickup.Broadcast();
 	}
 	
 	// Destroy actor on the Server
@@ -35,7 +34,6 @@ void UPropInteractComponent::Interact(AActor* Interactor)
 			}
 		}
 	}
-	//OnInteract();
 }
 
 void UPropInteractComponent::SetPropType(EPropType NewPropType)

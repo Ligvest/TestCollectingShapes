@@ -24,11 +24,9 @@ void UInteractCollisionBase::BeginPlay()
 {
 	Super::BeginPlay();		
 
-	//if(bIsEnabled){
-		// Register our Overlap Event
-		OnComponentBeginOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
-		OnComponentEndOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
-	//}
+	// Register our Overlap Event
+	OnComponentBeginOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
 }
 
 void UInteractCollisionBase::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -45,7 +43,6 @@ void UInteractCollisionBase::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedCo
 	{
 		// Notify that the actor is being picked up
 		Character->CurrentInteractionObject = this;
-		//OnOverlap.Broadcast(Character, PropType);
 	}
 }
 

@@ -46,7 +46,6 @@ void AInteractablePropBase::BeginPlay()
 			if (!(GameMode->PropTypeToCollect == PropType) ){
 				InteractCollision->DestroyComponent();
 			}
-			//InteractCollision->SetIsEnabled(GameMode->PropTypeToCollect == PropType);
 		}
 	}
 }

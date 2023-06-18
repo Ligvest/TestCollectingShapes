@@ -37,5 +37,4 @@ void ACollectProps_ProjectGameMode::BeginPlay()
 {
 	ACharacter* CharacterBase = UGameplayStatics::GetPlayerCharacter(this, 0);
 	ACollectProps_ProjectCharacter* Character = Cast<ACollectProps_ProjectCharacter>(CharacterBase);
-	//Character->InitializeHUD(this);
 }

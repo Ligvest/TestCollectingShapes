@@ -26,9 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	//UFUNCTION(BlueprintImplementableEvent)
-	//void OnInteract();
-
 	virtual void Interact(AActor* Interactor) override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
