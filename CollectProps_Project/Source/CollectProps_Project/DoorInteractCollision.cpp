@@ -2,12 +2,19 @@
 
 
 #include "DoorInteractCollision.h"
+#include "Kismet/GameplayStatics.h"
+#include "CollectProps_ProjectCharacter.h"
 #include "InteractableDoorBase.h"
 
-void UDoorInteractCollision::Interact()
+void UDoorInteractCollision::Interact(AActor* Interactor)
 {
-	AInteractableDoorBase* DoorActor = GetOwner<AInteractableDoorBase>();
-	if (DoorActor) {
+	if(AInteractableDoorBase* DoorActor = GetOwner<AInteractableDoorBase>(); DoorActor) {
+		if (ACharacter* CharacterBase = UGameplayStatics::GetPlayerCharacter(this, 0); CharacterBase) {
+			if (ACollectProps_ProjectCharacter* Character = Cast<ACollectProps_ProjectCharacter>(CharacterBase); Character) {
+				Character->AskServerToOpenDoor(DoorActor);
+			}
+		}
+
 		DoorActor->Open();
 	}
 }

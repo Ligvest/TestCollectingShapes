@@ -15,5 +15,6 @@ class COLLECTPROPS_PROJECT_API UTeleportInteractCollision : public UInteractColl
 	GENERATED_BODY()
 	
 public:
-	virtual void Interact() override;
+
+	virtual void Interact(AActor* Interactor) override;
 };

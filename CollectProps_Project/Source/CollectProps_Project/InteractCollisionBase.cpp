@@ -8,31 +8,52 @@ UInteractCollisionBase::UInteractCollisionBase()
 	bIsEnabled = true;
 }
 
+void UInteractCollisionBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UInteractCollisionBase, bIsEnabled);
+}
+
+void UInteractCollisionBase::SetIsEnabled(bool bNewIsEnabled)
+{
+	bIsEnabled = bNewIsEnabled;
+}
+
 void UInteractCollisionBase::BeginPlay()
 {
 	Super::BeginPlay();		
 
-	if(bIsEnabled){
-		// Register our Overlap Event
-		OnComponentBeginOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
-		OnComponentEndOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
-	}
+	// Register our Overlap Event
+	OnComponentBeginOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
 }
 
 void UInteractCollisionBase::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!bIsEnabled) {
+		OnComponentBeginOverlap.RemoveDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
+		OnComponentEndOverlap.RemoveDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
+		return;
+	}
+
 	// Checking if it is a First Person Character overlapping
 	ACollectProps_ProjectCharacter* Character = Cast<ACollectProps_ProjectCharacter>(OtherActor);
 	if(Character != nullptr)
 	{
 		// Notify that the actor is being picked up
 		Character->CurrentInteractionObject = this;
-		//OnOverlap.Broadcast(Character, PropType);
 	}
 }
 
 void UInteractCollisionBase::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (!bIsEnabled) {
+		OnComponentBeginOverlap.RemoveDynamic(this, &UInteractCollisionBase::OnBoxBeginOverlap);
+		OnComponentEndOverlap.RemoveDynamic(this, &UInteractCollisionBase::OnBoxEndOverlap);
+		return;
+	}
+
 	// Checking if it is a First Person Character overlapping
 	ACollectProps_ProjectCharacter* Character = Cast<ACollectProps_ProjectCharacter>(OtherActor);
 	if(Character != nullptr)

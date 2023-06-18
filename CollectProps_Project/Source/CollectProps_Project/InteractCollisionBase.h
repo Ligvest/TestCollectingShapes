@@ -23,13 +23,13 @@ class COLLECTPROPS_PROJECT_API UInteractCollisionBase : public UBoxComponent, pu
 public:
 	UInteractCollisionBase();
 
-public:
-
-	/** Delegate to whom anyone can subscribe to receive this event */
-	//UPROPERTY(BlueprintAssignable, Category = "Interaction")
-	//FOnInteractableActorOverlap OnOverlap;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsEnabled(bool bNewIsEnabled);
+
 
 protected:
 	/** Called when the game starts */
@@ -44,7 +44,7 @@ protected:
 	void OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
-	/** Don't enable if the object shouldn't be used */
-	UPROPERTY(BlueprintReadWrite)
+	/** disable if the object shouldn't be used */
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bIsEnabled;
 };

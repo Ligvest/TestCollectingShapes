@@ -1,13 +1,18 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CollectProps_ProjectCharacter.h"
-#include "CollectProps_ProjectProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "InteractInterface.h"
+#include "Net/UnrealNetwork.h"
+#include "DoorInteractCollision.h"
+#include "Kismet/GameplayStatics.h"
+#include "CollectPropsHUD.h"
+#include "CollectProps_ProjectGameMode.h"
+#include "InteractableDoorBase.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,11 +43,27 @@ ACollectProps_ProjectCharacter::ACollectProps_ProjectCharacter()
 
 }
 
+void ACollectProps_ProjectCharacter::InitializeHUD_Implementation()
+{
+	InitializeHUD_MULTI();
+}
+
+void ACollectProps_ProjectCharacter::InitializeHUD_MULTI_Implementation()
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0); PC) {
+		if (ACollectPropsHUD* HUD = PC->GetHUD<ACollectPropsHUD>(); HUD) {
+			HUD->InitializeHUDWidget();
+		}
+	}
+}
+
 void ACollectProps_ProjectCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
 
+	// Initialize HUD for every client
+	InitializeHUD();
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -60,7 +81,7 @@ void ACollectProps_ProjectCharacter::SetupPlayerInputComponent(class UInputCompo
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &ACollectProps_ProjectCharacter::OnPrimaryAction);
 
 	// Bind Interact event
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACollectProps_ProjectCharacter::OnInteract);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACollectProps_ProjectCharacter::RequestInteract);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
@@ -78,10 +99,47 @@ void ACollectProps_ProjectCharacter::SetupPlayerInputComponent(class UInputCompo
 	PlayerInputComponent->BindAxis("Look Up / Down Gamepad", this, &ACollectProps_ProjectCharacter::LookUpAtRate);
 }
 
-void ACollectProps_ProjectCharacter::OnInteract()
+
+void ACollectProps_ProjectCharacter::RequestInteract()
+{
+	AskServerToPerformInteract(this);
+	//OnInteract();
+}
+
+void ACollectProps_ProjectCharacter::AskServerToPerformInteract(AActor* Interactor)
+{
+	Server_OnInteract(Interactor);
+}
+
+void ACollectProps_ProjectCharacter::Server_OnInteract_Implementation(AActor* Interactor)
+{
+	OnInteract(Interactor);
+}
+
+void ACollectProps_ProjectCharacter::AskServerToDestroyActor(AActor* ActorToDestroy)
+{
+	Server_DestroyActor(ActorToDestroy);
+}
+
+void ACollectProps_ProjectCharacter::Server_DestroyActor_Implementation(AActor* ActorToDestroy)
+{
+	ActorToDestroy->Destroy();
+}
+
+void ACollectProps_ProjectCharacter::AskServerToOpenDoor(AInteractableDoorBase* DoorToOpen)
+{
+	Server_OpenDoor(DoorToOpen);
+}
+
+void ACollectProps_ProjectCharacter::Server_OpenDoor_Implementation(AInteractableDoorBase* DoorToOpen)
+{
+	DoorToOpen->Open();
+}
+
+void ACollectProps_ProjectCharacter::OnInteract(AActor* Interactor)
 {
 	if (CurrentInteractionObject) {
-		CurrentInteractionObject->Interact(); 
+		CurrentInteractionObject->Interact(Interactor);
 	}
 	else {
 		if (GEngine)
@@ -90,6 +148,8 @@ void ACollectProps_ProjectCharacter::OnInteract()
 		}
 	}
 }
+
+
 
 void ACollectProps_ProjectCharacter::OnPrimaryAction()
 {

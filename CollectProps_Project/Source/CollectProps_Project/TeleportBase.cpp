@@ -32,11 +32,10 @@ void ATeleportBase::Tick(float DeltaTime)
 
 }
 
-void ATeleportBase::PerformTeleport()
+void ATeleportBase::PerformTeleport(AActor* ActorToTeleport)
 {
-	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
-	if(Character){
-		Character->SetActorLocation(EndPoint);
+	if (ActorToTeleport) {
+		ActorToTeleport->SetActorLocation(EndPoint);
 	}
 }
 

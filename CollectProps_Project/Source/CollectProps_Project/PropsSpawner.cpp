@@ -28,6 +28,11 @@ TSubclassOf<AActor> APropsSpawner::GetRandActorToSpawn() const
 	return actorToSpawn;
 }
 
+void APropsSpawner::BeginPlay()
+{
+	SpawnRandomActor();
+}
+
 FVector APropsSpawner::GetSpawnPoint() const
 {
 	FVector origin = spawningBox_->GetComponentLocation();
@@ -38,8 +43,9 @@ FVector APropsSpawner::GetSpawnPoint() const
 	return randPoint;
 }
 
-void APropsSpawner::SpawnRandomActor_Implementation(const FVector& SpawnLocation)
+void APropsSpawner::SpawnRandomActor_Implementation()
 {
+	FVector SpawnLocation = GetSpawnPoint();
 	TSubclassOf<AActor> actorToSpawn = GetRandActorToSpawn();
 
 	if (actorToSpawn) {
