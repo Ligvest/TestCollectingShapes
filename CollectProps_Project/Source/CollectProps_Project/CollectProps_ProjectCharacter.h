@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Templates/SharedPointer.h"
+#include "Net/UnrealNetwork.h"
+
 #include "CollectProps_ProjectCharacter.generated.h"
 
 class UInputComponent;
@@ -33,12 +36,33 @@ class ACollectProps_ProjectCharacter : public ACharacter
 public:
 	ACollectProps_ProjectCharacter();
 
+
+	/** Property replication */
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	//UFUNCTION(NetMulticast, Reliable)
+	//void InitializeHUD(ACollectProps_ProjectGameMode* GameMode);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void InitializeGameState();
+
+	UFUNCTION(Server, Reliable)
+	void InitializeHUD();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void InitializeHUD_MULTI();
+
 protected:
 	virtual void BeginPlay();
 
 public:
 	/** Current object with which we will interact if press interact button (e.g. 'E'). */
 	class IInteractInterface* CurrentInteractionObject;
+
+	/** A variable helper for interact replication implementation */
+	UPROPERTY(ReplicatedUsing = Rep_RepInteractionObject)
+	TScriptInterface<IInteractInterface> RepInteractionObject;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -47,10 +71,37 @@ public:
 	/** Delegate to whom anyone can subscribe to receive this event */
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnUseItem OnUseItem;
+
+	void AskServerToPerformInteract(AActor* Interactor);
+
+	UFUNCTION(Server, Reliable)
+	void Server_OnInteract(AActor* Interactor);
+
+	UFUNCTION()
+	void Rep_RepInteractionObject();
+
+	UFUNCTION()
+	void AskServerToDestroyActor(AActor* ActorToDestroy);
+
+	UFUNCTION(Server, Reliable)
+	void Server_DestroyActor(AActor* ActorToDestroy);
+
+	UFUNCTION()
+	void AskServerToOpenDoor(AInteractableDoorBase* DoorToOpen);
+
+	UFUNCTION(Server, Reliable)
+	void Server_OpenDoor(AInteractableDoorBase* DoorToOpen);
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void Multicast_OpenDoor(AActor* DoorToOpen);
+
 protected:
 
 	/** Interact with an interactable object */
-	void OnInteract();
+	void OnInteract(AActor* Interactor);
+
+	/** Interact with an interactable object */
+	void RequestInteract();
 	
 	/** Fires a projectile. */
 	void OnPrimaryAction();

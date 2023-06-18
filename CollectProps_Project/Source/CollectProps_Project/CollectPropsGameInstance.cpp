@@ -5,6 +5,6 @@
 
 void UCollectPropsGameInstance::RestartLevel()
 {
-	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-	UGameplayStatics::OpenLevel(this, FName(*CurrentLevelName));
+		FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
+		GetWorld()->ServerTravel(CurrentLevelName);
 }

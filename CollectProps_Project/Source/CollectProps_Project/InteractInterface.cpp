@@ -3,7 +3,7 @@
 
 #include "InteractInterface.h"
 
-void IInteractInterface::Interact()
+void IInteractInterface::Interact(AActor* Interactor)
 {
 
 }

@@ -32,11 +32,13 @@ public:
 protected:
 	TSubclassOf<AActor> GetRandActorToSpawn() const;
 
+	virtual void BeginPlay() override;
+
 public:	
 	UFUNCTION(BlueprintPure, Category = Spawning)
 	FVector GetSpawnPoint() const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Spawning")
-	void SpawnRandomActor(const FVector& SpawnLocation);
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Spawning")
+	void SpawnRandomActor();
 
 };

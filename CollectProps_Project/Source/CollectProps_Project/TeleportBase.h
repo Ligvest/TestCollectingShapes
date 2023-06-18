@@ -34,5 +34,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void PerformTeleport();
+	void PerformTeleport(AActor* ActorToTeleport);
 };

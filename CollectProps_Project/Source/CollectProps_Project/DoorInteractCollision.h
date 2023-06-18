@@ -15,5 +15,5 @@ class COLLECTPROPS_PROJECT_API UDoorInteractCollision : public UInteractCollisio
 	GENERATED_BODY()
 
 public:
-	virtual void Interact() override;
+	virtual void Interact(AActor* Interactor) override;
 };

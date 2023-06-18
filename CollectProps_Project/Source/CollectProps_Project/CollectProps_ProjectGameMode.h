@@ -33,6 +33,14 @@ public:
 
 public:
 	ACollectProps_ProjectGameMode();
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void InitGameState();
+
+
+protected:
+virtual void BeginPlay() override;
 };
 
 

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "CollectProps_ProjectGameMode.h"
+
 #include "CollectPropsHUD.generated.h"
 
 /**
@@ -27,4 +29,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void LoseMessage();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeHUDWidget();
 };

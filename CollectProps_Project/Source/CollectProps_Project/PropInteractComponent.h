@@ -13,25 +13,31 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPropPickup);
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class COLLECTPROPS_PROJECT_API UPropInteractComponent : public UInteractCollisionBase
 {
 	GENERATED_BODY()
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	/** Called when the game starts */
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInteract();
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void OnInteract();
 
-	virtual void Interact() override;
+	virtual void Interact(AActor* Interactor) override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnPropPickup OnPropPickup;
 
 public:
-	UPROPERTY(EditDefaultsOnly);
+	UPROPERTY(Replicated);
 	EPropType PropType;
+
+	UFUNCTION(BlueprintCallable)
+	void SetPropType(EPropType NewPropType);
 };

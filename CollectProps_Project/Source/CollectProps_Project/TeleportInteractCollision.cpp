@@ -4,10 +4,10 @@
 #include "TeleportInteractCollision.h"
 #include "TeleportBase.h"
 
-void UTeleportInteractCollision::Interact()
+void UTeleportInteractCollision::Interact(AActor* Interactor)
 {
 	ATeleportBase* TeleportActor = GetOwner<ATeleportBase>();
 	if (TeleportActor) {
-		TeleportActor->PerformTeleport();
+		TeleportActor->PerformTeleport(Interactor);
 	}
 }

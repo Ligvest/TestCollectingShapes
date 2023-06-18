@@ -6,6 +6,7 @@
 #include "CollectPropsGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 ACollectPropsGameState::ACollectPropsGameState() {
 
@@ -13,18 +14,35 @@ ACollectPropsGameState::ACollectPropsGameState() {
 	PrimaryActorTick.bTickEvenWhenPaused = false;
 	PrimaryActorTick.TickGroup = TG_PostUpdateWork;
 
+
+	// Only the server executes this line as clients can't access GameMode
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
 	ACollectProps_ProjectGameMode* GameMode = Cast<ACollectProps_ProjectGameMode>(GameModeBase);
 	if (GameMode) {
+		// Initialize target amount of props
 		NumberOfPropsToCollect = GameMode->NumberOfPropsToCollect;
 
+		// Initialize PropType
+		PropTypeToCollect = GameMode->PropTypeToCollect;
+
 		// Create a timer with time left before game over
-		float SecondsBeforeGameOver = GameMode->TimeLeftBeforeGameOver;
+		SecondsBeforeGameOver = GameMode->TimeLeftBeforeGameOver;
 		GetWorldTimerManager().SetTimer(TimerBeforeGameOver, this, &ACollectPropsGameState::YouLose, SecondsBeforeGameOver, false);
 	}
 
 
+	// Initial number of collected props
 	PropsCounter = 0;
+}
+
+void ACollectPropsGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACollectPropsGameState, PropTypeToCollect);
+	DOREPLIFETIME(ACollectPropsGameState, NumberOfPropsToCollect);
+	DOREPLIFETIME(ACollectPropsGameState, PropsCounter);
+	DOREPLIFETIME(ACollectPropsGameState, SecondsBeforeGameOver);
 }
 
 void ACollectPropsGameState::IncrementPropsCounter()
@@ -45,14 +63,7 @@ void ACollectPropsGameState::YouWon()
 	ACollectPropsHUD* HUD = GetHud();
 	if (HUD) {
 		HUD->WinMessage();
-		UCollectPropsGameInstance* GameInstance = GetGameInstance<UCollectPropsGameInstance>();
-		if (GameInstance) {
-
-			// Create a timer to wait a little before game restart
-			FTimerHandle TimerHandle;
-			float SecondsToWait = 3.f;
-			GetWorldTimerManager().SetTimer(TimerHandle, GameInstance, &UCollectPropsGameInstance::RestartLevel, SecondsToWait, false);
-		}
+		RestartLevel();
 	}
 }
 
@@ -61,14 +72,7 @@ void ACollectPropsGameState::YouLose()
 	ACollectPropsHUD* HUD = GetHud();
 	if (HUD) {
 		HUD->LoseMessage();
-		UCollectPropsGameInstance* GameInstance = GetGameInstance<UCollectPropsGameInstance>();
-		if (GameInstance) {
-
-			// Create a timer to wait a little before game restart
-			FTimerHandle TimerHandle;
-			float SecondsToWait = 3.f;
-			GetWorldTimerManager().SetTimer(TimerHandle, GameInstance, &UCollectPropsGameInstance::RestartLevel, SecondsToWait, false);
-		}
+		RestartLevel();
 	}
 }
 
@@ -79,18 +83,52 @@ void ACollectPropsGameState::Tick(float DeltaSeconds)
 	if (TimerBeforeGameOver.IsValid()) {
 		ACollectPropsHUD* HUD = GetHud();
 		if (HUD) {
-			float SecondsBeforeGameOver = UKismetSystemLibrary::K2_GetTimerRemainingTimeHandle(this, TimerBeforeGameOver);
+			SecondsBeforeGameOver = UKismetSystemLibrary::K2_GetTimerRemainingTimeHandle(this, TimerBeforeGameOver);
 			HUD->UpdateTimer(SecondsBeforeGameOver);
 		}
 	}
 }
 
+void ACollectPropsGameState::Rep_PropsCounter()
+{
+	ACollectPropsHUD* HUD = GetHud();
+	if (HUD) {
+		HUD->IncrementPropsCounter();
+	}
+
+	if (PropsCounter == NumberOfPropsToCollect) {
+		YouWon();
+	}
+}
+
+void ACollectPropsGameState::Rep_OnSecondsBeforeGameOverUpdate()
+{
+	ACollectPropsHUD* HUD = GetHud();
+	if (HUD) {
+		HUD->UpdateTimer(SecondsBeforeGameOver);
+	}
+}
+
+void ACollectPropsGameState::RestartLevel()
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0); PC) {
+		if(PC->GetLocalRole() == ROLE_Authority) {
+			UCollectPropsGameInstance* GameInstance = GetGameInstance<UCollectPropsGameInstance>();
+			if (GameInstance) {
+				// Create a timer to wait a little before game restart
+				FTimerHandle TimerHandle;
+				float SecondsToWait = 3.f;
+				GetWorldTimerManager().SetTimer(TimerHandle, GameInstance, &UCollectPropsGameInstance::RestartLevel, SecondsToWait, false);
+			}
+		}
+	}
+}
+
+
 ACollectPropsHUD* ACollectPropsGameState::GetHud()
 {	
 	ACollectPropsHUD* HUD = nullptr;
-
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	if (PC) {
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0); PC) {
 		HUD = PC->GetHUD<ACollectPropsHUD>();
 	}
 
