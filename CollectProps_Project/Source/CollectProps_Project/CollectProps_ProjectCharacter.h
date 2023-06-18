@@ -38,15 +38,9 @@ public:
 
 
 	/** Property replication */
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	//UFUNCTION(NetMulticast, Reliable)
-	//void InitializeHUD(ACollectProps_ProjectGameMode* GameMode);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void InitializeGameState();
-
 	UFUNCTION(Server, Reliable)
 	void InitializeHUD();
 
@@ -59,10 +53,6 @@ protected:
 public:
 	/** Current object with which we will interact if press interact button (e.g. 'E'). */
 	class IInteractInterface* CurrentInteractionObject;
-
-	/** A variable helper for interact replication implementation */
-	UPROPERTY(ReplicatedUsing = Rep_RepInteractionObject)
-	TScriptInterface<IInteractInterface> RepInteractionObject;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -78,9 +68,6 @@ public:
 	void Server_OnInteract(AActor* Interactor);
 
 	UFUNCTION()
-	void Rep_RepInteractionObject();
-
-	UFUNCTION()
 	void AskServerToDestroyActor(AActor* ActorToDestroy);
 
 	UFUNCTION(Server, Reliable)
@@ -91,9 +78,6 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_OpenDoor(AInteractableDoorBase* DoorToOpen);
-
-	//UFUNCTION(NetMulticast, Reliable)
-	//void Multicast_OpenDoor(AActor* DoorToOpen);
 
 protected:
 

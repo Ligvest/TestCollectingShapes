@@ -44,22 +44,6 @@ ACollectProps_ProjectCharacter::ACollectProps_ProjectCharacter()
 
 }
 
-void ACollectProps_ProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ACollectProps_ProjectCharacter, RepInteractionObject);
-}
-
-void ACollectProps_ProjectCharacter::InitializeGameState_Implementation()
-{
-	if (AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this); GameModeBase) {
-		if (ACollectProps_ProjectGameMode* GameMode = Cast<ACollectProps_ProjectGameMode>(GameModeBase); GameMode) {
-			GameMode->InitGameState();
-		}
-	}
-}
-
 void ACollectProps_ProjectCharacter::InitializeHUD_Implementation()
 {
 	InitializeHUD_MULTI();
@@ -78,9 +62,6 @@ void ACollectProps_ProjectCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-	// Initialize GameState for every client
-	//InitializeGameState();
 
 	// Initialize HUD for every client
 	InitializeHUD();
@@ -133,13 +114,7 @@ void ACollectProps_ProjectCharacter::AskServerToPerformInteract(AActor* Interact
 
 void ACollectProps_ProjectCharacter::Server_OnInteract_Implementation(AActor* Interactor)
 {
-	//RepInteractionObject = InteractionObject;
 	OnInteract(Interactor);
-}
-
-void ACollectProps_ProjectCharacter::Rep_RepInteractionObject()
-{
-	//OnInteract();
 }
 
 void ACollectProps_ProjectCharacter::AskServerToDestroyActor(AActor* ActorToDestroy)
@@ -164,9 +139,6 @@ void ACollectProps_ProjectCharacter::Server_OpenDoor_Implementation(AInteractabl
 
 void ACollectProps_ProjectCharacter::OnInteract(AActor* Interactor)
 {
-	//IInteractInterface* PrevInteractionObject = CurrentInteractionObject;
-	//CurrentInteractionObject = RepInteractionObject.GetInterface();
-
 	if (CurrentInteractionObject) {
 		CurrentInteractionObject->Interact(Interactor);
 	}
@@ -176,9 +148,6 @@ void ACollectProps_ProjectCharacter::OnInteract(AActor* Interactor)
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Nothing to interact with"));
 		}
 	}
-
-	// Restore prev value of interaction object
-	//CurrentInteractionObject = PrevInteractionObject;
 }
 
 
